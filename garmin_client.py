@@ -4,7 +4,6 @@ This file fetches and caches activities from Garmin.
 
 from garminconnect import Garmin
 from User_Information_parser import get_email, get_password
-import json
 import zipfile
 import io
 from pathlib import Path
