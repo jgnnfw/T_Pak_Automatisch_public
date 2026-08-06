@@ -203,6 +203,7 @@ def open_browser():
 if __name__ == "__main__":
 
     print("Lade die Garmin Aktivitäten herunter. Bitte warten... ")
+    print("Drücke Ctrl+C, um abzubrechen.")
     fetch_and_cache_activities(start_date=get_last_entry_date(), end_date=None)
 
     # this should automatically open a browser window
