@@ -1,11 +1,19 @@
 import configparser
-import os
 import sys
+from pathlib import Path
 
 def get_config():
-    base_dir = os.path.dirname(sys.executable if getattr(sys, "frozen", False) else __file__)
+    if getattr(sys, "frozen", False):
+        base_dir = Path(sys.executable).parent
+    else:
+        base_dir = Path(__file__).resolve().parent
+
+    config_path = base_dir / "User_Sensible_Information.ini"
     config = configparser.ConfigParser(interpolation=None)
-    config.read(os.path.join(base_dir, "User_Sensible_Information.ini"))
+
+    if not config.read(config_path):
+        raise FileNotFoundError(f"Could not find configuration file: {config_path}")
+
     return config
 
 def get_email():
