@@ -1,4 +1,3 @@
-import json
 from flask import Flask, render_template, request,  redirect, url_for
 from fitparse import FitFile
 import io
@@ -14,12 +13,12 @@ import threading
 from pathlib import Path
 import sys
 
-app = Flask(__name__)
-
 def resource_path(relative_path):
     if getattr(sys, "frozen", False):
         return Path(sys._MEIPASS) / relative_path
     return Path(__file__).parent / relative_path
+
+app = Flask(__name__, template_folder=str(resource_path("templates")), static_folder=str(resource_path("static")))
 
 def seconds_to_time(seconds: float | int) -> str:
     """
@@ -148,7 +147,7 @@ def index():
 
     activities = [prepare_activity(activity) for activity in cached]
 
-    return render_template(resource_path("index.html"), activities=activities)
+    return render_template("index.html", activities=activities)
 
 @app.route("/upload", methods=["POST"])
 def upload():
@@ -185,7 +184,7 @@ def upload():
 
 @app.route("/confirm")
 def confirm():
-    return render_template(resource_path("confirm.html"))
+    return render_template("confirm.html")
 
 
 @app.route("/shutdown", methods=["POST"])
