@@ -1,0 +1,78 @@
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    background-color: #eeeeee;
+    margin: 20px;
+}
+
+h1 {
+    text-align: center;
+    color: darkblue;
+}
+
+p {
+    text-align: center;
+}
+
+.options {
+    margin-bottom: 15px;
+}
+
+.activity-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.activity-item {
+    display: flex;
+    align-items: center;
+    background-color: lightgray;
+    border: 1px solid darkgray;
+    border-radius: 10px;
+    padding: 5px 15px;
+}
+
+.route {
+    width: auto;
+    min-width: 100px;
+    height: auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 5px;
+    margin-right: 10px;
+}
+
+.activity-info {
+    display: flex;
+    align-items: center;
+    gap: 40px;
+    flex: 1;
+    font-size: large;
+    font-weight: bold;
+}
+
+.title {
+    min-width: 100px;
+}
+
+.activity-selection {
+    display: flex;
+    gap: 15px;
+}
+
+select {
+    min-width: 180px;
+    padding: 5px;
+    background-color: white;
+    border-radius: 5px;
+}
+
+button {
+    margin-top: 25px;
+    float: right;
+    padding: 10px 30px;
+    font-size: large;
+    border-radius: 8px;
+    cursor: pointer;
+}

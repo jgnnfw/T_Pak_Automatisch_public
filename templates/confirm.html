@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Hochladen abgeschlossen</title>
+  <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+  <div class="confirm-box">
+    <h1>Alle Aktivitäten hochgeladen.</h1>
+    <p>Du kannst diesen Tab oder dieses Fenster nun schliessen.</p>
+  </div>
+  <script>
+    fetch("/shutdown", {method: "POST"});
+  </script>
+</body>
+</html>

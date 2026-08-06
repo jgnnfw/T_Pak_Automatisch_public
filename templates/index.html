@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="de">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Aktivitäten auf T-Pak hochladen</title>
+    <link rel="stylesheet" href="/static/styles.css">
+    <script defer src="/static/script.js"></script>
+</head>
+
+<body>
+
+<h1>Aktivitäten auf T-Pak hochladen</h1>
+
+<form method="POST" action="/upload" id="upload-form">
+
+<div class="options">
+    <label>
+        <input type="checkbox" id="show-all">
+        Alle Aktivitätstypen anzeigen
+    </label>
+</div>
+
+<div class="activity-container">
+
+{% for activity in activities %}
+
+<div class="activity-item">
+
+    <div class="route">
+        <svg width="{{ activity.svg_width }}"
+             height="{{ activity.svg_height }}"
+             viewBox="0 0 {{ activity.svg_width }} {{ activity.svg_height }}">
+            <polyline
+                points="{{ activity.svg_points }}"
+                fill="none"
+                stroke="black"
+                stroke-width="2"/>
+        </svg>
+    </div>
+
+    <div class="activity-info">
+        <span>
+            {{ activity.date }}
+        </span>
+        <span class="title">
+            {{ activity.name }}
+        </span>
+        <span>
+            {{ activity.distance }} km
+        </span>
+        <span>
+            {{ activity.time }}
+        </span>
+    </div>
+
+    <div class="activity-selection">
+        <input type="hidden"
+               name="activity_ids"
+               value="{{ activity.id }}">
+        <select name="activity_type_{{ activity.id }}">
+            {% for t in activity.recommended_types %}
+            <option value="{{ t }}" {% if t == activity.default_type %} selected {% endif %}>
+                {{ t }}
+            </option>
+            {% endfor %}
+            {% for t in activity.all_types %}
+            {% if t not in activity.recommended_types %}
+            <option value="{{ t }}" class="extra-type" hidden>
+                {{ t }}
+            </option>
+            {% endif %}
+            {% endfor %}
+        </select>
+        <select name="trainingsgefaess_{{ activity.id }}">
+            {% for g in activity.all_trainingsgefaesse %}
+            <option value="{{ g }}" {% if g == activity.default_trainingsgefaess %} selected {% endif %}>
+                {{ g }}
+            </option>
+            {% endfor %}
+        </select>
+    </div>
+</div>
+
+{% endfor %}
+
+</div>
+
+<button type="submit">
+    Alle hochladen
+</button>
+
+</form>
+
+</body>
+</html>
