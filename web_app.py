@@ -194,15 +194,7 @@ def open_browser():
     webbrowser.open("http://localhost:5000/")
 
 if __name__ == "__main__":
-    # only fetch from garmin if nothing is pending yet
-    try:
-        with open("Activity_Data/pending_upload.json", "r") as f:
-            pending_activities = json.load(f)
-    except FileNotFoundError:
-        pending_activities = None
-
-    if not pending_activities:
-        fetch_and_cache_activities(start_date=get_last_entry_date(), end_date=None)
+    fetch_and_cache_activities(start_date=get_last_entry_date(), end_date=None)
 
     # this should automatically open a browser window
     if os.environ.get("WERKZEUG_RUN_MAIN") != "true":
