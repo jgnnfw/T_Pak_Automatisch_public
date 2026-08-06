@@ -13,8 +13,21 @@ from datetime import date
 
 DATA_DIR = Path("./Activity_Data")
 PENDING_PATH = DATA_DIR / "pending_upload.json"
-with open("t_pak_ids.json", "r", encoding="utf-8") as fh:
-    TPAK_DATA = json.load(fh)
+
+
+def load_t_pak_ids():
+    if getattr(sys, "frozen", False):
+        base_dir = sys._MEIPASS
+    else:
+        base_dir = os.path.dirname(__file__)
+
+    json_path = os.path.join(base_dir, "t_pak_ids.json")
+
+    with open(json_path, "r", encoding="utf-8") as fh:
+        return json.load(fh)
+
+TPAK_DATA = load_t_pak_ids()
+
 
 # ---------- pending-upload list ----------
 
