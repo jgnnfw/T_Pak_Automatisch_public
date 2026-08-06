@@ -11,8 +11,15 @@ from typing import Any
 import os
 import webbrowser
 import threading
+from pathlib import Path
+import sys
 
 app = Flask(__name__)
+
+def resource_path(relative_path):
+    if getattr(sys, "frozen", False):
+        return Path(sys._MEIPASS) / relative_path
+    return Path(__file__).parent / relative_path
 
 def seconds_to_time(seconds: float | int) -> str:
     """
@@ -141,7 +148,7 @@ def index():
 
     activities = [prepare_activity(activity) for activity in cached]
 
-    return render_template("index.html", activities=activities)
+    return render_template(resource_path("index.html"), activities=activities)
 
 @app.route("/upload", methods=["POST"])
 def upload():
@@ -178,7 +185,7 @@ def upload():
 
 @app.route("/confirm")
 def confirm():
-    return render_template("confirm.html")
+    return render_template(resource_path("confirm.html"))
 
 
 @app.route("/shutdown", methods=["POST"])
