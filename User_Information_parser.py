@@ -16,6 +16,9 @@ def get_config():
 
     return config
 
+def get_name():
+    return get_config()["name"]["name"]
+
 def get_email():
     return get_config()["garmin"]["email"]
 
