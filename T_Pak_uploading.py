@@ -1,3 +1,4 @@
+from time import sleep
 import requests
 from fitparse import FitFile
 from User_Information_parser import get_token, get_user_id
@@ -11,8 +12,12 @@ TOKEN = get_token()
 USER_ID = get_user_id()
 
 
-def upload_to_t_pak(fit_bytes, given_activity_type : str, activity : dict[str, Any], details : dict[str, Any], debug : bool = False) \
-        -> tuple[str, dict] | tuple[int | None, dict | str]:
+def upload_to_t_pak(
+        fit_bytes, given_activity_type : str,
+        activity : dict[str, Any],
+        details : dict[str, Any],
+        debug : bool = False
+) -> tuple[int, dict] | tuple[str, dict] | tuple[int | None, str]:
     """
     Post an activity to t-pak.
     :param fit_bytes: unzipped non-converted fitfile in bytes format
@@ -90,7 +95,14 @@ def get_last_entry_date():
         "X-Auth-Token": get_token(),
         "Content-Type": "application/json",
     }
-    response = requests.get("https://www.t-pak.ch/api/activities/last-diary-entry", headers=headers)  # your actual endpoint
-    response.raise_for_status()
+
+    try:
+        response = requests.get("https://www.t-pak.ch/api/activities/last-diary-entry", headers=headers)
+        response.raise_for_status()
+    except requests.exceptions.HTTPError as e:
+        print("Please make sure your t-pak token is up to date!")
+        sleep(3)
+        return None
+
     date_str = response.text.strip('"')          # "YYYY-MM-DD"
     return date.fromisoformat(date_str)

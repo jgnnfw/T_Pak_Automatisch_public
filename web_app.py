@@ -203,7 +203,12 @@ if __name__ == "__main__":
 
     print("Lade die Garmin Aktivitäten herunter. Bitte warten... ")
     print("Drücke Ctrl+C, um abzubrechen.")
-    fetch_and_cache_activities(start_date=get_last_entry_date(), end_date=None)
+
+    start_date = get_last_entry_date()
+    if start_date is None:
+        quit()
+
+    fetch_and_cache_activities(start_date=start_date, end_date=None)
 
     # this should automatically open a browser window
     if os.environ.get("WERKZEUG_RUN_MAIN") != "true":
