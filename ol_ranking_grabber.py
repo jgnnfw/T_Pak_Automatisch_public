@@ -4,7 +4,8 @@ from html import escape
 from User_Information_parser import get_name
 from playwright.sync_api import sync_playwright
 from typing import TypedDict, Union
-
+from rich.progress import Progress, SpinnerColumn, BarColumn, TextColumn, TimeRemainingColumn
+from rich.console import Console
 
 ### classes of Typed Dict ###
 class Course(TypedDict):
@@ -303,6 +304,7 @@ def search_ranking_on_date(activity_date: date, debug: bool = False) -> RankingP
     except Exception as e:
         return None, e
 
+
 def search_rankings_on_dates(activity_dates: list[date], debug: bool = False) -> dict[date, RankingParameters | tuple[None, Exception] | None]:
 
     results: dict[date, RankingParameters | tuple[None, Exception] | None] = {}
@@ -314,45 +316,59 @@ def search_rankings_on_dates(activity_dates: list[date], debug: bool = False) ->
     with sync_playwright() as p:
         browser = p.chromium.launch()
 
-        for year, dates_in_year in dates_by_year.items():
+        # progress bar setup
+        console = Console(force_terminal=True, color_system="truecolor")
+        with Progress(
+                SpinnerColumn(style="cyan"),
+                TextColumn("[bold cyan]{task.description}"),
+                BarColumn(complete_style="green", finished_style="bold green"),
+                TextColumn("[progress.percentage]{task.percentage:>3.0f}%"),
+                TimeRemainingColumn(),
+                console=console,
+        ) as progress:
+            task = progress.add_task("Searching rankings...", total=len(activity_dates))
 
-            o_l_view_source_page_link = f"view-source:https://www.o-l.ch/cgi-bin/results?event=Auswahl&year={year}"
+            for year, dates_in_year in dates_by_year.items():
 
-            page = browser.new_page()
-            try:
-                page.goto(o_l_view_source_page_link, wait_until="networkidle", timeout=15000)
-                o_l_view_source_page_text = page.locator("body").inner_text()
-            except Exception as e:
-                for d in dates_in_year:
-                    results[d] = (None, e)
-                continue
-            finally:
-                page.close()
+                o_l_view_source_page_link = f"view-source:https://www.o-l.ch/cgi-bin/results?event=Auswahl&year={year}"
 
-            for activity_date in dates_in_year:
-
-                possible_rankings_link_list = find_date_links(o_l_view_source_page_text, activity_date, debug=debug)
-                if not possible_rankings_link_list:
-                    results[activity_date] = None
+                page = browser.new_page()
+                try:
+                    page.goto(o_l_view_source_page_link, wait_until="networkidle", timeout=15000)
+                    o_l_view_source_page_text = page.locator("body").inner_text()
+                except Exception as e:
+                    for d in dates_in_year:
+                        results[d] = (None, e)
                     continue
+                finally:
+                    page.close()
 
-                found = None
-                for rankings_link in possible_rankings_link_list:
-                    browser_page = browser.new_page()
-                    try:
-                        browser_page.goto(rankings_link, wait_until="networkidle", timeout=15000)
-                        rankings_text = browser_page.locator("body").inner_text()
-                        rankings_parameters = find_ranking_parameters(rankings_text, debug=debug)
-                        if rankings_parameters is not None:
-                            found = rankings_parameters
-                            break # finally is still executed
-                    except Exception as e:
-                        found = (None, e)
-                        break
-                    finally:
-                        browser_page.close()
+                for activity_date in dates_in_year:
 
-                results[activity_date] = found
+                    possible_rankings_link_list = find_date_links(o_l_view_source_page_text, activity_date, debug=debug)
+                    if not possible_rankings_link_list:
+                        results[activity_date] = None
+                        progress.advance(task)
+                        continue
+
+                    found = None
+                    for rankings_link in possible_rankings_link_list:
+                        browser_page = browser.new_page()
+                        try:
+                            browser_page.goto(rankings_link, wait_until="networkidle", timeout=15000)
+                            rankings_text = browser_page.locator("body").inner_text()
+                            rankings_parameters = find_ranking_parameters(rankings_text, debug=debug)
+                            if rankings_parameters is not None:
+                                found = rankings_parameters
+                                break # finally is still executed
+                        except Exception as e:
+                            found = (None, e)
+                            break
+                        finally:
+                            browser_page.close()
+
+                    results[activity_date] = found
+                    progress.advance(task)
 
         browser.close()
 
