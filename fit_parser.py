@@ -100,7 +100,7 @@ def _round_preserving_sum(values: list[float], total: int | None = None) -> list
     # distribute the remaining +1s to the values with the largest fractional part
     fractions = sorted(
         range(len(values)),
-        key=lambda i: values[i] - floors[i],
+        key=lambda idx: values[idx] - floors[idx],
         reverse=True
     )
 
