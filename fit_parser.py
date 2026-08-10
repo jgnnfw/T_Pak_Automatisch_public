@@ -14,27 +14,27 @@ def get_session_field(fitfile, field_name: str) -> Any:
     return next((f["value"] for f in session["fields"] if f["name"] == field_name), None)
 
 
-def _bucket_hr_zones(fitfile, running: bool = False):
-    """
-    THIS FUNCTION IS NOT USED ANYMORE. The Heart Rate Zones are already stored in the activity_dict.
-    """
-    records = list(fitfile.get_messages("record", as_dict=True))
-    if running:
-        zone_seconds = {idx: 0.0 for _, _, name, idx in HR_ZONE_BOUNDARIES_RUNNING if name}
-    else:
-        zone_seconds = {idx: 0.0 for _, _, name, idx in HR_ZONE_BOUNDARIES if name}
-
-    for prev, curr in zip(records, records[1:]):
-        hr = next((f["value"] for f in curr["fields"] if f["name"] == "heart_rate"), None)
-        t0 = next((f["value"] for f in prev["fields"] if f["name"] == "timestamp"), None)
-        t1 = next((f["value"] for f in curr["fields"] if f["name"] == "timestamp"), None)
-        if hr is not None and t0 is not None and t1 is not None:
-            dt = (t1 - t0).total_seconds()
-            for lo, hi, name, idx in HR_ZONE_BOUNDARIES:
-                if lo <= hr <= hi and name:
-                    zone_seconds[idx] += dt
-                    break
-    return zone_seconds
+# def _bucket_hr_zones(fitfile, running: bool = False):
+#     """
+#     THIS FUNCTION IS NOT USED ANYMORE. The Heart Rate Zones are already stored in the activity_dict.
+#     """
+#     records = list(fitfile.get_messages("record", as_dict=True))
+#     if running:
+#         zone_seconds = {idx: 0.0 for _, _, name, idx in HR_ZONE_BOUNDARIES_RUNNING if name}
+#     else:
+#         zone_seconds = {idx: 0.0 for _, _, name, idx in HR_ZONE_BOUNDARIES if name}
+#
+#     for prev, curr in zip(records, records[1:]):
+#         hr = next((f["value"] for f in curr["fields"] if f["name"] == "heart_rate"), None)
+#         t0 = next((f["value"] for f in prev["fields"] if f["name"] == "timestamp"), None)
+#         t1 = next((f["value"] for f in curr["fields"] if f["name"] == "timestamp"), None)
+#         if hr is not None and t0 is not None and t1 is not None:
+#             dt = (t1 - t0).total_seconds()
+#             for lo, hi, name, idx in HR_ZONE_BOUNDARIES:
+#                 if lo <= hr <= hi and name:
+#                     zone_seconds[idx] += dt
+#                     break
+#     return zone_seconds
 
 def get_hr_zones(activity : dict[str, Any]):
     zone_seconds = {}
