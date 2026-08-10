@@ -62,10 +62,11 @@ def get_activity_parameters(fitfile, trainingsgefaess: str = DEFAULT_TRAININGSGE
     parameters["Maximalgeschwindigkeit"] = get_session_field(fitfile, "max_speed")  \
                                            or get_session_field(fitfile, "enhanced_max_speed") \
                                            or None
-    rpe = get_session_field(fitfile, "unknown_193")
-    parameters["Trainingsbelastung"] = int(rpe/10) if rpe else None
+    
     # Trainingsbelastung ist in unknown_193 codiert, mit 10 multipliziert, da fitfile diesen Datentyp nicht unterstützt.
     # Das Gefühl ist in unknown_192 codiert mit einer Zahl 0-100. {0: sehr schwach, 25: schwach, 50: normal, 75: stark, 100: sehr stark}
+    rpe = get_session_field(fitfile, "unknown_193")
+    parameters["Trainingsbelastung"] = int(rpe/10) if rpe else None
 
     parameters["Durchschnittspuls"] = get_session_field(fitfile, "avg_heart_rate") or None
     parameters["Maximalpuls"] = get_session_field(fitfile, "max_heart_rate") or None
