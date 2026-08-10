@@ -42,6 +42,7 @@ def get_hr_zones(activity : dict[str, Any]):
         zone_seconds[HR_ZONE_DESCRIPTIONS[idx]] = activity[f"hrTimeInZone_{idx}"]
     return zone_seconds
 
+
 def get_location(details : dict[str, Any]) -> str | None:
     return details.get("locationName", None)
 
