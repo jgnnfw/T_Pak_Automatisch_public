@@ -3,5 +3,4 @@ User_Sensible_Information.ini
 __pycache__
 build
 *.pyc
-ol_ranking_grabber.py
 experiments.py
