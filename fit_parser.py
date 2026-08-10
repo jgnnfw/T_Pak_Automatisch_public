@@ -174,6 +174,6 @@ def get_date(activity_dict : dict[str, Any]) -> str | None:
 
     if date_str is None:
         return None
-
-    date_str = date_str.split(" ")[0].split("-")
-    return f"{date_str[2]}.{date_str[1]}."
+    else:
+        date_str = date_str.split(" ")[0].split("-")
+        return f"{date_str[2]}.{date_str[1]}."
