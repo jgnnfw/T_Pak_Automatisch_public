@@ -6,6 +6,7 @@ from fit_parser import get_sport, get_name, get_distance, get_total_time, extrac
 from garmin_to_t_pak import GARMIN_TO_TPAK_DEFAULT, t_pak_id_mapper, \
      LIST_SUGGESTED_SPORTS, ALL_SPORTS, ALL_TRAININGSGEFAESSE
 from T_Pak_uploading import upload_to_t_pak, get_last_entry_date
+from User_Information_parser import DEFAULT_TRAININGSGEFAESS
 from typing import Any
 import os
 import webbrowser
@@ -93,7 +94,7 @@ def prepare_activity(activity_tup : tuple[int, bytes, dict, dict]) -> dict[str, 
         "default_type": t_pak_sport,
         "recommended_types": recommended_activities,
         "all_types": ALL_SPORTS,
-        "default_trainingsgefaess": "Regionalkader",
+        "default_trainingsgefaess": DEFAULT_TRAININGSGEFAESS,
         "all_trainingsgefaesse" : ALL_TRAININGSGEFAESSE,
     }
 
