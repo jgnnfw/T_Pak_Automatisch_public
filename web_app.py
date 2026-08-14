@@ -171,7 +171,7 @@ def upload():
 
         try:
             upload_to_t_pak(fit_bytes, activity_type, activity_dict, details_dict)
-            mark_uploaded(int(activity_id))
+            mark_uploaded(int(activity_id), delete_cache=True)
         except Exception as e:
             failures.append((activity_id, str(e)))
 
