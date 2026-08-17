@@ -128,7 +128,7 @@ def get_last_entry_date():
     try:
         response = requests.get("https://www.t-pak.ch/api/activities/last-diary-entry", headers=headers)
         response.raise_for_status()
-    except requests.exceptions.HTTPError as e:
+    except requests.exceptions.HTTPError:
         print("Please make sure your t-pak token is up to date!")
         sleep(3)
         return None
