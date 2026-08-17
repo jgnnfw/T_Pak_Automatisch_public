@@ -166,6 +166,8 @@ def upload():
     manual_ids = [a_id for a_id in activity_ids if request.form.get(f"manual_{a_id}")]
     real_ids = [a_id for a_id in activity_ids if a_id not in manual_ids]
 
+    stretching_ids = [a_id for a_id in activity_ids if request.form.get(f"stretching_{a_id}")]
+
     # collect activity types up front so we know which are OL Wettkampf
     activity_types = {
         activity_id: request.form.get(f"activity_type_{activity_id}")
@@ -201,12 +203,14 @@ def upload():
             if a_date is not None:
                 results = rankings_by_date.get(a_date)
 
+        stretching = (activity_id in stretching_ids)
+
         if isinstance(results, Exception):
             failures.append((activity_id, f"Exception when grabbing result. Exception: {results}"))
             continue
 
         try:
-            upload_to_t_pak(fit_bytes, activity_type, activity_dict, details_dict, results=results)
+            upload_to_t_pak(fit_bytes, activity_type, activity_dict, details_dict, results=results, stretching=stretching)
             mark_uploaded(int(activity_id), delete_cache=True)
         except Exception as e:
             failures.append((activity_id, str(e)))

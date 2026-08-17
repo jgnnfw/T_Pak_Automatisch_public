@@ -32,6 +32,7 @@ def upload_to_t_pak(
         activity : dict[str, Any],
         details : dict[str, Any],
         results : RankingParameters | None = None,
+        stretching : bool = False,
         debug : bool = False,
 ) -> tuple[int, dict] | tuple[str, dict] | tuple[int | None, str]:
     """
@@ -41,6 +42,7 @@ def upload_to_t_pak(
     :param activity: dictionary with activity parameters
     :param details: dictionary with activity details
     :param results: dictionary containing the results of the competition for the activity
+    :param stretching: whether 5 mins of stretching are included
     :param debug: if True, no activity is posted to the t-pak api and headers and payload are returned for inspection.
     :return: status code or error text and payload (if debug is False)
     """
@@ -65,6 +67,8 @@ def upload_to_t_pak(
         additional_parameters, sub_activities = apply_ranking_to_activity(results, time_min)
         parameter_list += list(additional_parameters.items())
 
+    if stretching:
+        sub_activities.append({"subActivityTypeId": t_pak_id_mapper("Stretching"), "duration": 5})
 
     intensity_ranges = get_intensity_ranges(fitfile, activity)
 
