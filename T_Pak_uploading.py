@@ -132,4 +132,7 @@ def get_last_entry_date():
         return None
 
     date_str = response.text.strip('"')          # "YYYY-MM-DD"
+
+    print(f"Last entry date was: {date_str}, grabbing all activities since then...")
+
     return date.fromisoformat(date_str)
