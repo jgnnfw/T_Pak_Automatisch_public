@@ -65,7 +65,8 @@ def upload_to_t_pak(
         try:
             additional_parameters, sub_activities = apply_ranking_to_activity(results, time_min)
             parameter_list += list(additional_parameters.items())
-        except ValueError:
+        except ValueError as e:
+            print(e)
             sub_activity_type_id = MAIN_DURATION_SUBACTIVITY.get(activity_type_id, activity_type_id)
             sub_activities = [{"subActivityTypeId": sub_activity_type_id, "duration": time_min}]
 
