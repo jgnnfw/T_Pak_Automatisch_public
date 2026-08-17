@@ -162,10 +162,14 @@ def upload():
         for activity_id, fit_bytes, activity_dict, details_dict in load_cached_activities(only_pending=True)
     }
 
+    # remove manual checked activities from "real" activities
+    manual_ids = [a_id for a_id in activity_ids if request.form.get(f"manual_{a_id}")]
+    real_ids = [a_id for a_id in activity_ids if a_id not in manual_ids]
+
     # collect activity types up front so we know which are OL Wettkampf
     activity_types = {
         activity_id: request.form.get(f"activity_type_{activity_id}")
-        for activity_id in activity_ids
+        for activity_id in real_ids
     }
 
     # gather dates needing rankings, fetch once
@@ -179,7 +183,11 @@ def upload():
 
     failures = []
 
-    for activity_id in activity_ids:
+    # mark manually checked activities as uploaded
+    for activity_id in manual_ids:
+        mark_uploaded(int(activity_id), delete_cache=True)
+
+    for activity_id in real_ids:
         fit_bytes, activity_dict, details_dict = cached[activity_id]
         activity_type = request.form.get(f"activity_type_{activity_id}")
 
