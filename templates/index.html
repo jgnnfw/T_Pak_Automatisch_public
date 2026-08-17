@@ -10,15 +10,21 @@
 
 <body>
 
-<h1>Aktivitäten auf T-Pak hochladen</h1>
-
 <form method="POST" action="/upload" id="upload-form">
 
-<div class="options">
-    <label>
-        <input type="checkbox" id="show-all">
-        Alle Aktivitätstypen anzeigen
-    </label>
+<div class="header">
+    <div class="options">
+        <label>
+            <input type="checkbox" id="show-all">
+            Alle Aktivitätstypen anzeigen
+        </label>
+    </div>
+    
+    <h1>Aktivitäten auf T-Pak hochladen</h1>
+
+    <div class="options" style="text-align:right;">
+        Manuell Hochladen 🗹
+    </div>
 </div>
 
 <div class="activity-container">
@@ -40,16 +46,16 @@
     </div>
 
     <div class="activity-info">
-        <span>
+        <span class="date">
             {{ activity.date }}
         </span>
         <span class="title">
             {{ activity.name }}
         </span>
-        <span>
+        <span class="distance">
             {{ activity.distance }} km
         </span>
-        <span>
+        <span class="duration">
             {{ activity.time }}
         </span>
     </div>
@@ -79,6 +85,9 @@
             </option>
             {% endfor %}
         </select>
+    </div>
+    <div class="checkbox">
+        <input type="checkbox" name="manual_{{ activity.id }}">
     </div>
 </div>
 

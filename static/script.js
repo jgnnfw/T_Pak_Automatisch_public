@@ -13,7 +13,7 @@ document.addEventListener(
     }
 );
 
-// Toggle full activity-type list on/off. No SVG generation here.
+// Toggle full activity-type list on/off.
 document.getElementById('show-all').addEventListener('change', function () {
     document.querySelectorAll('.extra-type').forEach(function (opt) {
         opt.hidden = !this.checked;
