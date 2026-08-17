@@ -70,8 +70,6 @@ def upload_to_t_pak(
             sub_activity_type_id = MAIN_DURATION_SUBACTIVITY.get(activity_type_id, activity_type_id)
             sub_activities = [{"subActivityTypeId": sub_activity_type_id, "duration": time_min}]
 
-
-
     intensity_ranges = get_intensity_ranges(fitfile, activity)
 
     parameters = [{"activityParameterId" : k,
