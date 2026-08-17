@@ -1,6 +1,6 @@
 from typing import Any
 from User_Information_parser import DEFAULT_TRAININGSGEFAESS
-from garmin_to_t_pak import HR_ZONE_DESCRIPTIONS, t_pak_id_mapper, ONLY_MOVING_TIME
+from garmin_to_t_pak import HR_ZONE_DESCRIPTIONS, t_pak_id_mapper, ONLY_MOVING_TIME, MAIN_DURATION_SUBACTIVITY
 from datetime import date
 from typing import TypedDict, Union
 
@@ -110,20 +110,21 @@ def apply_ranking_to_activity(ranking_parameters: RankingParameters, total_activ
     """
     wettkampfzeit = ranking_parameters.get("Wettkampfzeit")
 
-    if not isinstance(wettkampfzeit, (int, float)):
-        # No usable competition time (e.g. "P.fehl." / "aufgeg.") -> caller should fall back to current logic
-        raise ValueError(f"Wettkampfzeit not numeric: {wettkampfzeit!r}")
+    if isinstance(wettkampfzeit, (int, float)):
+        rest = total_activity_minutes - wettkampfzeit
+        einlaufen = auslaufen = rest / 2
 
-    rest = total_activity_minutes - wettkampfzeit
-    einlaufen = auslaufen = rest / 2
+        subactivity_parameters_before = {
+            "OL Wettkampf": wettkampfzeit,
+            "Einlaufen": einlaufen,
+            "Auslaufen": auslaufen,
+        }
 
-    subactivity_parameters_before = {
-        "OL Wettkampf": wettkampfzeit,
-        "Einlaufen": einlaufen,
-        "Auslaufen": auslaufen,
-    }
-
-    subactivity_parameters : list[Subactivity] = [{"subActivityTypeId": t_pak_id_mapper(k, "OL Wettkampf"), "duration": v} for k, v in subactivity_parameters_before.items()]
+        subactivity_parameters : list[Subactivity] = [{"subActivityTypeId": t_pak_id_mapper(k, "OL Wettkampf"), "duration": v} for k, v in subactivity_parameters_before.items()]
+    else:
+        subactivity_parameters : list[Subactivity] = [{"subActivityTypeId": t_pak_id_mapper("OL Wettkampf"), "duration": total_activity_minutes-10},
+                                                      {"subActivityTypeId": t_pak_id_mapper("Einlaufen"), "duration": 5},
+                                                      {"subActivityTypeId": t_pak_id_mapper("Auslaufen"), "duration": 5}]
 
     additional_parameters = {t_pak_id_mapper(k) : v for k, v in ranking_parameters.items() if k != "Wettkampfzeit"}
 
