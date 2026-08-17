@@ -13,7 +13,7 @@
 <form method="POST" action="/upload" id="upload-form">
 
 <div class="header">
-    <div class="options">
+    <div id="left_header" class="options">
         <label>
             <input type="checkbox" id="show-all">
             Alle Aktivitätstypen anzeigen
@@ -21,10 +21,24 @@
     </div>
     
     <h1>Aktivitäten auf T-Pak hochladen</h1>
-
-    <div class="options" style="text-align:right;">
-        Manuell Hochladen 🗹
+    
+    <div id="two_examples" class="options">
+        <div class="example">
+            <span> Manuell Hochladen (auf T-Pak) </span>
+            <div class="checkbox" id="manual_example_checkbox">
+                <input class="manual disabled" type="checkbox" id="manual_example">
+                <label class="manual disabled" for="manual_example"></label>
+            </div>
+        </div>
+        <div class="example">
+            <span> +5 min Stretching </span>
+            <div class="checkbox" id="stretching_example_checkbox">
+                <input class="stretching disabled" type="checkbox" id="stretching_example">
+                <label class="stretching disabled" for="stretching_example"></label>
+            </div>
+        </div>
     </div>
+    
 </div>
 
 <div class="activity-container">
@@ -87,7 +101,12 @@
         </select>
     </div>
     <div class="checkbox">
-        <input type="checkbox" name="manual_{{ activity.id }}">
+        <input class="stretching" type="checkbox" name="stretching_{{ activity.id }}" id="stretching_{{ activity.id }}">
+        <label class="stretching" for="stretching_{{ activity.id }}"></label>
+    </div>
+    <div class="checkbox">
+        <input class="manual" type="checkbox" name="manual_{{ activity.id }}" id="manual_{{ activity.id }}">
+        <label class="manual" for="manual_{{ activity.id }}"></label>
     </div>
 </div>
 

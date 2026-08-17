@@ -1,3 +1,7 @@
+:root {
+  --blue: #0074D9;
+}
+
 body {
     font-family: Arial, Helvetica, sans-serif;
     background-color: #eee;
@@ -7,24 +11,25 @@ body {
 
 .header {
     position: sticky;
-    display: flex;
-    justify-content: space-between;
-    box-sizing: border-box;
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
     align-items: center;
+    box-sizing: border-box;
     top: 0;
     background: #eee;
-    z-index: 1;
+    z-index: 10;
     opacity: 0.8;
     border: 2px solid gray;
     border-radius: 10px;
-    padding-left: 30px;
-    padding-right: 30px;
+    padding-left: 15px;
+    padding-right: 0;
 }
 
 
 h1 {
     text-align: center;
     color: darkblue;
+    justify-self: center;
 }
 
 p {
@@ -120,17 +125,107 @@ input[type="checkbox"] {
   margin: 5px;
   cursor: pointer;
 }
-.distance {
-  width: 100px;
-  text-align: right;
+
+.manual, .stretching{
+  display: none;
 }
 
+input.manual + label.manual, input.stretching + label.stretching{
+    font-size: 1.2rem;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 2px solid darkgray;
+    border-radius: 10%;
+    transition: .1s all;
+    cursor: pointer;
+    z-index: 999 !important;
+}
+
+/* manual */
+input.manual + label.manual:after {
+    color: var(--blue);
+    content: "M";
+}
+
+input.manual:checked + label.manual {
+    background: var(--blue);
+}
+
+input.manual:checked + label.manual:after {
+    color: white;
+    content: "M";
+}
+
+input.manual.disabled + label.manual {
+    background: var(--blue);
+    cursor: default;
+    pointer-events: none;
+}
+
+input.manual.disabled + label.manual:after {
+    color: white;
+    content: "M";
+}
+
+/* stretching */
+input.stretching + label.stretching:after {
+    color: var(--blue);
+    content: "🧘";
+}
+
+input.stretching:checked + label.stretching {
+    background: var(--blue);
+}
+
+input.stretching:checked + label.stretching:after {
+    color: white;
+    content: "🧘";
+}
+
+input.stretching.disabled + label.stretching {
+    background: var(--blue);
+    cursor: default;
+    pointer-events: none;
+}
+
+input.stretching.disabled + label.stretching:after {
+    color: white;
+    content: "🧘";
+}
+
+.distance {
+    width: 100px;
+    text-align: right;
+}
 
 .date {
-  width: 70px;
-  text-align: right;
+    width: 70px;
+    text-align: right;
 }
 .duration {
-  width: 70px;
-  text-align: right;
+    width: 70px;
+    text-align: right;
+}
+
+.example {
+    text-align: right;
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+}
+
+#two_examples {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 10px;
+    padding: 10px;
+    justify-self: right;
+}
+
+#left_header {
+    justify-self: left;
 }
