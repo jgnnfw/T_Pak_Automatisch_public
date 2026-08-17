@@ -4,8 +4,7 @@ import io
 from garmin_client import load_cached_activities, mark_uploaded, fetch_and_cache_activities
 from fit_parser import get_sport, get_name, get_distance, get_total_time, extract_coordinates, get_date, \
     get_datetime_date
-from garmin_to_t_pak import GARMIN_TO_TPAK_DEFAULT, t_pak_id_mapper, \
-     LIST_SUGGESTED_SPORTS, ALL_SPORTS, ALL_TRAININGSGEFAESSE
+from garmin_to_t_pak import GARMIN_TO_TPAK_DEFAULT, LIST_SUGGESTED_SPORTS, ALL_SPORTS, ALL_TRAININGSGEFAESSE
 from T_Pak_uploading import upload_to_t_pak, get_last_entry_date
 from User_Information_parser import DEFAULT_TRAININGSGEFAESS
 from typing import Any
@@ -14,8 +13,6 @@ import webbrowser
 import threading
 from pathlib import Path
 import sys
-from datetime import date
-
 from ol_ranking_grabber import search_rankings_on_dates
 
 
