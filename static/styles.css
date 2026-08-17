@@ -41,7 +41,6 @@ p {
     flex-direction: column;
     gap: 10px;
     /*! margin-top: 80px; */
-    grid-template-columns: ;
     box-sizing: border-box;
     margin-top: 10px;
 }
