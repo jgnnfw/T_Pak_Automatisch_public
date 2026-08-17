@@ -305,9 +305,9 @@ def search_ranking_on_date(activity_date: date, debug: bool = False) -> RankingP
         return None, e
 
 
-def search_rankings_on_dates(activity_dates: list[date], debug: bool = False) -> dict[date, RankingParameters | tuple[None, Exception] | None]:
+def search_rankings_on_dates(activity_dates: list[date], debug: bool = False) -> dict[date, RankingParameters | Exception | None]:
 
-    results: dict[date, RankingParameters | tuple[None, Exception] | None] = {}
+    results = {}
 
     dates_by_year: dict[int, list[date]] = {}
     for d in activity_dates:
@@ -362,7 +362,7 @@ def search_rankings_on_dates(activity_dates: list[date], debug: bool = False) ->
                                 found = rankings_parameters
                                 break # finally is still executed
                         except Exception as e:
-                            found = (None, e)
+                            found = e
                             break
                         finally:
                             browser_page.close()

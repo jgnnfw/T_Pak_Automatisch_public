@@ -2,7 +2,8 @@ from flask import Flask, render_template, request,  redirect, url_for
 from fitparse import FitFile
 import io
 from garmin_client import load_cached_activities, mark_uploaded, fetch_and_cache_activities
-from fit_parser import get_sport, get_name, get_distance, get_total_time, extract_coordinates, get_date
+from fit_parser import get_sport, get_name, get_distance, get_total_time, extract_coordinates, get_date, \
+    get_datetime_date
 from garmin_to_t_pak import GARMIN_TO_TPAK_DEFAULT, t_pak_id_mapper, \
      LIST_SUGGESTED_SPORTS, ALL_SPORTS, ALL_TRAININGSGEFAESSE
 from T_Pak_uploading import upload_to_t_pak, get_last_entry_date
@@ -13,6 +14,10 @@ import webbrowser
 import threading
 from pathlib import Path
 import sys
+from datetime import date
+
+from ol_ranking_grabber import search_rankings_on_dates
+
 
 def resource_path(relative_path):
     if getattr(sys, "frozen", False):
@@ -160,6 +165,21 @@ def upload():
         for activity_id, fit_bytes, activity_dict, details_dict in load_cached_activities(only_pending=True)
     }
 
+    # collect activity types up front so we know which are OL Wettkampf
+    activity_types = {
+        activity_id: request.form.get(f"activity_type_{activity_id}")
+        for activity_id in activity_ids
+    }
+
+    # gather dates needing rankings, fetch once
+    ol_dates = []
+    for a_id, atype in activity_types.items():
+        a_date = get_datetime_date(cached[a_id][1])
+        if atype == "OL Wettkampf" and a_id in cached.keys() and a_date is not None:
+            ol_dates.append(a_date)
+
+    rankings_by_date = search_rankings_on_dates(ol_dates) if ol_dates else {}
+
     failures = []
 
     for activity_id in activity_ids:
@@ -170,8 +190,18 @@ def upload():
             failures.append((activity_id, "No activity type specified."))
             continue
 
+        results = None
+        if activity_type == "OL Wettkampf":
+            a_date = get_datetime_date(activity_dict)
+            if a_date is not None:
+                results = rankings_by_date.get(a_date)
+
+        if isinstance(results, Exception):
+            failures.append((activity_id, f"Exception when grabbing result. Exception: {results}"))
+            continue
+
         try:
-            upload_to_t_pak(fit_bytes, activity_type, activity_dict, details_dict)
+            upload_to_t_pak(fit_bytes, activity_type, activity_dict, details_dict, results=results)
             mark_uploaded(int(activity_id), delete_cache=True)
         except Exception as e:
             failures.append((activity_id, str(e)))

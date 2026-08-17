@@ -1,6 +1,31 @@
 from typing import Any
 from User_Information_parser import DEFAULT_TRAININGSGEFAESS
 from garmin_to_t_pak import HR_ZONE_DESCRIPTIONS, t_pak_id_mapper, ONLY_MOVING_TIME
+from datetime import date
+from typing import TypedDict, Union
+
+# class definition of RankingParameters
+RankingParameters = TypedDict(
+    "RankingParameters",
+    {
+        "Anzahl Athleten am Start": int,
+        "Siegerzeit": Union[float, int, str, None],
+        "Wettkampfzeit": Union[float, int, str, None],
+        "Rang": Union[int, None],
+        "Distanz (Bahndaten)": Union[float, None],
+        "Steigung (Bahndaten)": Union[int, None],
+        "Anzahl Posten": Union[int, None],
+    },
+)
+
+
+Subactivity = TypedDict(
+    "Subactivity",
+    {
+        "subActivityTypeId" : Union[int, None],
+        "duration" : Union[float | int],
+    },
+)
 
 
 def get_session_field(fitfile, field_name: str) -> Any:
@@ -74,6 +99,35 @@ def get_activity_parameters(fitfile, trainingsgefaess: str = DEFAULT_TRAININGSGE
 
     result_parameters : dict[int | None, Any] = {t_pak_id_mapper(k) : v for k, v in parameters.items()}
     return result_parameters
+
+
+def apply_ranking_to_activity(ranking_parameters: RankingParameters, total_activity_minutes : float | int) -> tuple[dict[int | None, Any], list[Subactivity]]:
+    """
+    Returns additional activity parameters and list of Subactivities.
+    :param ranking_parameters: RankingParameters Dictionary
+    :param total_activity_minutes: total time of activity in minutes (can be moving time)
+    :return: (activity parameters, list of Subactivities)
+    """
+    wettkampfzeit = ranking_parameters.get("Wettkampfzeit")
+
+    if not isinstance(wettkampfzeit, (int, float)):
+        # No usable competition time (e.g. "P.fehl." / "aufgeg.") -> caller should fall back to current logic
+        raise ValueError(f"Wettkampfzeit not numeric: {wettkampfzeit!r}")
+
+    rest = total_activity_minutes - wettkampfzeit
+    einlaufen = auslaufen = rest / 2
+
+    subactivity_parameters_before = {
+        "OL Wettkampf": wettkampfzeit,
+        "Einlaufen": einlaufen,
+        "Auslaufen": auslaufen,
+    }
+
+    subactivity_parameters : list[Subactivity] = [{"subActivityTypeId": t_pak_id_mapper(k, "OL Wettkampf"), "duration": v} for k, v in subactivity_parameters_before.items()]
+
+    additional_parameters = {t_pak_id_mapper(k) : v for k, v in ranking_parameters.items() if k != "Wettkampfzeit"}
+
+    return additional_parameters, subactivity_parameters
 
 
 def get_time(fitfile) -> float | int:
@@ -175,5 +229,15 @@ def get_date(activity_dict : dict[str, Any]) -> str | None:
     if date_str is None:
         return None
     else:
-        date_str = date_str.split(" ")[0].split("-")
-        return f"{date_str[2]}.{date_str[1]}."
+        date_list = date_str.split(" ")[0].split("-")
+        return f"{date_list[2]}.{date_list[1]}."
+
+
+def get_datetime_date(activity_dict : dict[str, Any]) -> date | None:
+    date_str = activity_dict.get("startTimeLocal", None)
+
+    if date_str is None:
+        return None
+    else:
+        date_list = date_str.split(" ")[0].split("-")
+        return date(int(date_list[0]), int(date_list[1]), int(date_list[2]))
