@@ -2,10 +2,17 @@ import re
 from datetime import date
 from html import escape
 from User_Information_parser import get_name
-from playwright.sync_api import sync_playwright
 from typing import TypedDict, Union
 from rich.progress import Progress, SpinnerColumn, BarColumn, TextColumn, TimeRemainingColumn
 from rich.console import Console
+import os
+import sys
+from playwright.sync_api import sync_playwright
+
+if getattr(sys, "frozen", False):
+    base_path = sys._MEIPASS
+    os.environ["PLAYWRIGHT_BROWSERS_PATH"] = os.path.join(base_path, "ms-playwright")
+
 
 ### classes of Typed Dict ###
 class Course(TypedDict):
@@ -278,7 +285,7 @@ def search_ranking_on_date(activity_date: date, debug: bool = False) -> RankingP
             if debug:
                 print("opening browser...")
 
-            browser = p.chromium.launch()
+            browser = p.firefox.launch()
             page = browser.new_page()
             page.goto(o_l_view_source_page_link, wait_until="networkidle", timeout=15000)
             o_l_view_source_page_text = page.locator("body").inner_text()
@@ -314,7 +321,7 @@ def search_rankings_on_dates(activity_dates: list[date], debug: bool = False) ->
         dates_by_year.setdefault(d.year, []).append(d)
 
     with sync_playwright() as p:
-        browser = p.chromium.launch()
+        browser = p.firefox.launch()
 
         # progress bar setup
         console = Console(force_terminal=True, color_system="truecolor")
@@ -338,7 +345,7 @@ def search_rankings_on_dates(activity_dates: list[date], debug: bool = False) ->
                     o_l_view_source_page_text = page.locator("body").inner_text()
                 except Exception as e:
                     for d in dates_in_year:
-                        results[d] = (None, e)
+                        results[d] = e
                     continue
                 finally:
                     page.close()
