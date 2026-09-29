@@ -12,7 +12,7 @@ Dies ist ein Programm zum einfacheren Ausfüllen von T-Pak. Deine Garmin Aktivit
 
 ### Programm herunterladen
 
-(Windows, python und git installiert, andere Betriebssysteme leichte Abänderung nötig)
+(Windows, python und git installiert; für andere Betriebssysteme sind die commands anzupassen)
 ```bash
 cd <C:\Pfad\zu\lokalem\Speicherort\für\Programm>
 git clone https://github.com/jgnnfw/T_Pak_Automatisch_public
@@ -31,7 +31,7 @@ Dieser Schritt könnte etwas schwieriger sein. Er ist bereits in der `User_Sensi
 1. In einem Browser (auf Firefox funktioniert es sicher) navigiere zu https://www.t-pak.ch/user-profile/profile und logge dich falls nötig ein.
 2. Öffne die Entwickler-Tools meist mit `CTRL + SHIFT + I` oder `F12` oder in einem Menu ersichtlich. Öffne dort den Tab `Netzwerkanalyse`. Lade nun die T-Pak Seite neu.
 3. Nun sollten ganz viele Meldungen erscheinen. Suche dort eine grüne Meldung heraus, die `profile` heisst, oder von `api/users/profile` stammt.
-4. Finde unter den Anfrage Kopfzeilen ganz unten den `X-Auth-Token`, ein Wirrwarr von Buchstaben und Zahlen. Kopiere diesen bei der ini-Datei in das Token Feld. Falls du das Programm länger brauchst, könnte es sein, dass du diesen Token erneut finden musst, da er sich aktualisieren kann.
+4. Finde unter den Anfrage-Kopfzeilen ganz unten den `X-Auth-Token`, ein Wirrwarr von Buchstaben und Zahlen. Kopiere diesen bei der ini-Datei in das Token Feld. Falls du das Programm länger brauchst, könnte es sein, dass du diesen Token erneut finden musst, da er sich aktualisieren kann.
 5. Unter der Antwort, finde irgendwo `"id":"..."` bei `userData`, eine wahrscheinlich vierstellige Zahl. Du könntest etwas suchen/scrollen müssen. Das ist die Id, unter der dich T-Pak intern erkannt. Füge auch sie in der ini-Datei ein.
 
 ### Ausführen
@@ -65,4 +65,4 @@ Bugs bitte via github Issue melden. Pull-request und Forks sind willkommen.
 
 ## KI Verwendung
 
-Viel dieses Programms wurde mithilfe von Claude geschrieben.
+Grosse Teile dieses Programms basieren auf Antworten von Claude.
