@@ -17,8 +17,8 @@ Dies ist ein Programm zum einfacheren Ausfüllen von T-Pak. Deine Garmin Aktivit
 cd <C:\Pfad\zu\lokalem\Speicherort\für\Programm>
 git clone https://github.com/jgnnfw/T_Pak_Automatisch_public
 cd T_Pak_Automatisch_public
-python -m venv .\.venv
-pip install -r requirements.text
+python -m venv .venv
+.venv\Scripts\python.exe -m pip install -r requirements.text
 rename User_Sensible_Information_TEMPLATE.ini User_Sensible_Information.ini
 ```
 
@@ -39,7 +39,7 @@ Dieser Schritt könnte etwas schwieriger sein. Er ist bereits in der `User_Sensi
 ```bash
 cd <C:\Pfad\zu\lokalem\Speicherort\für\Programm>
 cd T_Pak_Automatisch_public
-python web_app.py
+.venv\Scripts\python.exe web_app.py
 ```
 
 Falls alles funktioniert, sollten einige Zeilen in der Konsole auftauchen und nach etwa 10 Sekunden ein Fenster im Browser erscheinen, das etwa weitere 5 Sekunden für das Laden braucht.
