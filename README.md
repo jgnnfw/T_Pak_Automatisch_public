@@ -6,13 +6,19 @@ Dies ist ein Programm zum einfacheren Ausfüllen von T-Pak. Deine Garmin Aktivit
 
 - Laptop oder PC nötig
 - Aktivitäten müssen mit Garmin aufgenommen sein
-- Lücken in vorheriger T-Pak Ausfüllung können vom Programm nicht erkannt werden
+- Lücken in vorheriger T-Pak Ausfüllung können vom Programm (noch) nicht erkannt werden
 
 ## Programm ausführen
 
+### Python und Git herunterladen
+
+Folgt bald...
+
 ### Programm herunterladen
 
-(Windows, python und git installiert; für andere Betriebssysteme sind die commands anzupassen)
+Den folgenden Code solltest du mit installiertem python und git in deinem Terminal ausführen. Er lädt das vorliegende Programm herunter, erstellt dann eine neue python Umgebung, lädt die nötigen externen Programme herunter und benennt ein Dokument um. 
+
+(Windows, für andere Betriebssysteme leichte Abänderungen nötig.)
 ```bash
 cd <C:\Pfad\zu\lokalem\Speicherort\für\Programm>
 git clone https://github.com/jgnnfw/T_Pak_Automatisch_public
@@ -22,17 +28,7 @@ python -m venv .venv
 rename User_Sensible_Information_TEMPLATE.ini User_Sensible_Information.ini
 ```
 
-Öffne dann die Datei `User_Sensible_Information.ini` (Sollte jetzt so umbenennt worden sein) in einem Text editor und gebe deine Daten ein. Ändere nichts an der Struktur der Datei! Speichere die Datei danach. Im Folgenden ist eine Anleitung, um die T-Pak Daten zu finden.
-
-### T-Pak User ID und Token finden
-
-Dieser Schritt könnte etwas schwieriger sein. Er ist bereits in der `User_Sensible_Information.ini` Datei beschrieben, hier aber noch leicht ausführlicher:
-
-1. In einem Browser (auf Firefox funktioniert es sicher) navigiere zu https://www.t-pak.ch/user-profile/profile und logge dich falls nötig ein.
-2. Öffne die Entwickler-Tools meist mit `CTRL + SHIFT + I` oder `F12` oder in einem Menu ersichtlich. Öffne dort den Tab `Netzwerkanalyse`. Lade nun die T-Pak Seite neu.
-3. Nun sollten ganz viele Meldungen erscheinen. Suche dort eine grüne Meldung heraus, die `profile` heisst, oder von `api/users/profile` stammt.
-4. Finde unter den Anfrage-Kopfzeilen ganz unten den `X-Auth-Token`, ein Wirrwarr von Buchstaben und Zahlen. Kopiere diesen bei der ini-Datei in das Token Feld. Falls du das Programm länger brauchst, könnte es sein, dass du diesen Token erneut finden musst, da er sich aktualisieren kann.
-5. Unter der Antwort, finde irgendwo `"id":"..."` bei `userData`, eine wahrscheinlich vierstellige Zahl. Du könntest etwas suchen/scrollen müssen. Das ist die Id, unter der dich T-Pak intern erkannt. Füge auch sie in der ini-Datei ein.
+Öffne dann die Datei `User_Sensible_Information.ini` (Sollte jetzt so umbenennt worden sein) in einem Text editor und gebe deine Daten ein. Ändere nichts an der Struktur der Datei! Speichere die Datei danach.
 
 ### Ausführen
 

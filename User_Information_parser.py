@@ -1,6 +1,7 @@
 import configparser
 import sys
 from pathlib import Path
+import requests
 
 def get_config():
     if getattr(sys, "frozen", False):
@@ -25,11 +26,31 @@ def get_email():
 def get_password():
     return get_config()["garmin"]["password"]
 
+def get_login():
+    login = requests.post(
+        "https://www.t-pak.ch/api/authenticate/login",
+        data = {"username": get_config()["t_pak"]["user_name"],
+                "password": get_config()["t_pak"]["password"],}
+    )
+
+    if not login.ok:
+        print("T-Pak Login Failed")
+        raise ValueError("T-Pak Login Failed")
+
+    user_id = login.json()["userId"]
+    if type(user_id) is tuple:
+        user_id = str(user_id[0])
+    token = str(login.json()["token"])
+
+    return user_id, token
+
 def get_token():
-    return get_config()["t_pak"]["token"]
+    user_id, token = get_login()
+    return token
 
 def get_user_id():
-    return int(get_config()["t_pak"]["user_id"])
+    user_id, token = get_login()
+    return user_id
 
 def get_default_trainingsgefaess():
     return get_config()["settings"]["default_trainingsgefaess"]
