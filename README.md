@@ -18,7 +18,7 @@ Folgt bald...
 
 Den folgenden Code solltest du mit installiertem python und git in deinem Terminal ausführen. Er lädt das vorliegende Programm herunter, erstellt dann eine neue python Umgebung, lädt die nötigen externen Programme herunter und benennt ein Dokument um. 
 
-(Windows, für andere Betriebssysteme leichte Abänderungen nötig.)
+(Windows in der `Eingabeaufforderung`, für andere Betriebssysteme leichte Abänderungen nötig.)
 ```bash
 cd <C:\Pfad\zu\lokalem\Speicherort\für\Programm>
 git clone https://github.com/jgnnfw/T_Pak_Automatisch_public
