@@ -223,6 +223,7 @@ def upload():
 
     return redirect(url_for("confirm"))
 
+
 @app.route("/confirm")
 def confirm():
     return render_template("confirm.html")
