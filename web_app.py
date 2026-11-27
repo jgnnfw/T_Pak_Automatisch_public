@@ -14,6 +14,7 @@ import threading
 from pathlib import Path
 import sys
 from ol_ranking_grabber import search_rankings_on_dates
+from datetime import date
 
 
 def resource_path(relative_path):
@@ -187,7 +188,7 @@ def upload():
 
     # mark manually checked activities as uploaded
     for activity_id in manual_ids:
-        mark_uploaded(int(activity_id), delete_cache=True)
+        mark_uploaded(int(activity_id), delete_cache=True, delete_on_t_pak=False) # if manually uploaded don't delete the upload
 
     for activity_id in real_ids:
         fit_bytes, activity_dict, details_dict = cached[activity_id]
@@ -211,7 +212,7 @@ def upload():
 
         try:
             upload_to_t_pak(fit_bytes, activity_type, activity_dict, details_dict, results=results, stretching=stretching)
-            mark_uploaded(int(activity_id), delete_cache=True)
+            mark_uploaded(int(activity_id), delete_cache=True, delete_on_t_pak=True)
         except Exception as e:
             failures.append((activity_id, str(e)))
 
@@ -221,6 +222,7 @@ def upload():
         return redirect(url_for("index"))
 
     return redirect(url_for("confirm"))
+
 
 @app.route("/confirm")
 def confirm():
@@ -239,19 +241,25 @@ def shutdown():
 def open_browser():
     webbrowser.open("http://localhost:5000/")
 
-if __name__ == "__main__":
-
+def main(different_start_date: date | None = None):
     print("Lade die Garmin Aktivitäten herunter. Bitte warten... ")
     print("Drücke Ctrl+C, um abzubrechen.")
 
-    start_date = get_last_entry_date()
+    # get the start date
+    start_date = different_start_date or get_last_entry_date()
     if start_date is None:
-        quit()
+        raise ValueError("No start date specified.")
 
+    # get the activities
     fetch_and_cache_activities(start_date=start_date, end_date=None)
 
     # this should automatically open a browser window
     if os.environ.get("WERKZEUG_RUN_MAIN") != "true":
         threading.Timer(1, open_browser).start()
+
     # run the app
     app.run(host="127.0.0.1", port=5000, debug=True)
+
+
+if __name__ == "__main__":
+    main()

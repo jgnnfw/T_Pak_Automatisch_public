@@ -1,9 +1,9 @@
 """
 This file fetches and caches activities from Garmin.
 """
-
+import requests
 from garminconnect import Garmin
-from User_Information_parser import get_email, get_password
+from User_Information_parser import get_email, get_password, get_token
 import zipfile
 import io
 from pathlib import Path
@@ -50,11 +50,12 @@ def _add_pending(activity_id: int) -> None:
         pending.append(activity_id)
         _save_pending(pending)
 
-def mark_uploaded(activity_id: int, delete_cache: bool = False) -> None:
+def mark_uploaded(activity_id: int, delete_cache: bool = True, delete_on_t_pak: bool = False) -> None:
     """
     Call after a successful upload to remove the activity from the pending list.
     :param activity_id: The activity id to mark uploaded
     :param delete_cache: if True, also deletes the cached folder on disk (future option).
+    :param delete_on_t_pak: if True, delete this activity from the t-pak "uploaded" list.
     """
     pending = _load_pending()
     if activity_id in pending:
@@ -72,6 +73,15 @@ def mark_uploaded(activity_id: int, delete_cache: bool = False) -> None:
                 f.unlink()
             folder.rmdir()
 
+    if delete_on_t_pak:
+        headers = {"X-Auth-Token": get_token(),"Content-Type": "application/json"}
+        try:
+            response = requests.delete(f"https://www.t-pak.ch/api/activity-imports/garmin/{activity_id}",
+                                      headers=headers, timeout=10)
+            if response.status_code not in [200, 204, 400]: # if there is no activity to delete thats fine
+                print(f"Warning: When deleting t-pak upload (id {activity_id}), the status code is {response.status_code}")
+        except requests.exceptions.RequestException as e:
+            print(f"Connection or request error when deleting a t-pak upload: {e}")
 
 # ---------- cache folder helpers ----------
 
