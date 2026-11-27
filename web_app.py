@@ -188,7 +188,7 @@ def upload():
 
     # mark manually checked activities as uploaded
     for activity_id in manual_ids:
-        mark_uploaded(int(activity_id), delete_cache=True)
+        mark_uploaded(int(activity_id), delete_cache=True, t_pak_activity_id=None) # if manually uploaded don't delete the upload
 
     for activity_id in real_ids:
         fit_bytes, activity_dict, details_dict = cached[activity_id]
