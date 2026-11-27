@@ -50,23 +50,24 @@ def _add_pending(activity_id: int) -> None:
         pending.append(activity_id)
         _save_pending(pending)
 
-def mark_uploaded(activity_id: int, delete_cache: bool = False) -> None:
+def mark_uploaded(garmin_activity_id: int, delete_cache: bool = False, t_pak_activity_id : int | None = None) -> None:
     """
     Call after a successful upload to remove the activity from the pending list.
-    :param activity_id: The activity id to mark uploaded
+    :param garmin_activity_id: The activity id to mark uploaded
     :param delete_cache: if True, also deletes the cached folder on disk (future option).
+    :param t_pak_activity_id: if not None, delete this activity from the t-pak "uploaded" list.
     """
     pending = _load_pending()
-    if activity_id in pending:
-        pending.remove(activity_id)
+    if garmin_activity_id in pending:
+        pending.remove(garmin_activity_id)
         _save_pending(pending)
     else:
         print('\033[91m {}\033[00m'.format('Attention: ') +
-              f"Activity {activity_id} could not be marked uploaded since it was not found in the pending list."
+              f"Activity {garmin_activity_id} could not be marked uploaded since it was not found in the pending list."
         )
 
     if delete_cache:
-        folder = _find_activity_folder(activity_id)
+        folder = _find_activity_folder(garmin_activity_id)
         if folder:
             for f in folder.iterdir():
                 f.unlink()
