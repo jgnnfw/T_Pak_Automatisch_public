@@ -73,6 +73,16 @@ def mark_uploaded(garmin_activity_id: int, delete_cache: bool = False, t_pak_act
                 f.unlink()
             folder.rmdir()
 
+    if t_pak_activity_id is not None:
+        headers = {"X-Auth-Token": get_token(),"Content-Type": "application/json"}
+        try:
+            response = requests.delete(f"https://www.t-pak.ch/api/activity-imports/garmin/{t_pak_activity_id}",
+                                      headers=headers)
+            response.raise_for_status()
+        except requests.exceptions.HTTPError as e:
+            print(f"Could not delete t-pak activity upload {t_pak_activity_id}: {e}")
+        except requests.exceptions.ConnectionError as e:
+            print(f"Could not establish connection while deleting t-pak activity upload: {e}")
 
 # ---------- cache folder helpers ----------
 
