@@ -14,6 +14,7 @@ import threading
 from pathlib import Path
 import sys
 from ol_ranking_grabber import search_rankings_on_dates
+from datetime import date
 
 
 def resource_path(relative_path):
@@ -239,19 +240,25 @@ def shutdown():
 def open_browser():
     webbrowser.open("http://localhost:5000/")
 
-if __name__ == "__main__":
-
+def main(different_start_date: date | None = None):
     print("Lade die Garmin Aktivitäten herunter. Bitte warten... ")
     print("Drücke Ctrl+C, um abzubrechen.")
 
-    start_date = get_last_entry_date()
+    # get the start date
+    start_date = different_start_date or get_last_entry_date()
     if start_date is None:
-        quit()
+        raise ValueError("No start date specified.")
 
+    # get the activities
     fetch_and_cache_activities(start_date=start_date, end_date=None)
 
     # this should automatically open a browser window
     if os.environ.get("WERKZEUG_RUN_MAIN") != "true":
         threading.Timer(1, open_browser).start()
+
     # run the app
     app.run(host="127.0.0.1", port=5000, debug=True)
+
+
+if __name__ == "__main__":
+    main()
