@@ -188,7 +188,7 @@ def upload():
 
     # mark manually checked activities as uploaded
     for activity_id in manual_ids:
-        mark_uploaded(int(activity_id), delete_cache=True, t_pak_activity_id=None) # if manually uploaded don't delete the upload
+        mark_uploaded(int(activity_id), delete_cache=True, delete_on_t_pak=False) # if manually uploaded don't delete the upload
 
     for activity_id in real_ids:
         fit_bytes, activity_dict, details_dict = cached[activity_id]
@@ -212,7 +212,7 @@ def upload():
 
         try:
             upload_to_t_pak(fit_bytes, activity_type, activity_dict, details_dict, results=results, stretching=stretching)
-            mark_uploaded(int(activity_id), delete_cache=True)
+            mark_uploaded(int(activity_id), delete_cache=True, delete_on_t_pak=True)
         except Exception as e:
             failures.append((activity_id, str(e)))
 

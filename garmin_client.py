@@ -1,9 +1,9 @@
 """
 This file fetches and caches activities from Garmin.
 """
-
+import requests
 from garminconnect import Garmin
-from User_Information_parser import get_email, get_password
+from User_Information_parser import get_email, get_password, get_token
 import zipfile
 import io
 from pathlib import Path
@@ -50,39 +50,38 @@ def _add_pending(activity_id: int) -> None:
         pending.append(activity_id)
         _save_pending(pending)
 
-def mark_uploaded(garmin_activity_id: int, delete_cache: bool = False, t_pak_activity_id : int | None = None) -> None:
+def mark_uploaded(activity_id: int, delete_cache: bool = True, delete_on_t_pak: bool = False) -> None:
     """
     Call after a successful upload to remove the activity from the pending list.
-    :param garmin_activity_id: The activity id to mark uploaded
+    :param activity_id: The activity id to mark uploaded
     :param delete_cache: if True, also deletes the cached folder on disk (future option).
-    :param t_pak_activity_id: if not None, delete this activity from the t-pak "uploaded" list.
+    :param delete_on_t_pak: if True, delete this activity from the t-pak "uploaded" list.
     """
     pending = _load_pending()
-    if garmin_activity_id in pending:
-        pending.remove(garmin_activity_id)
+    if activity_id in pending:
+        pending.remove(activity_id)
         _save_pending(pending)
     else:
         print('\033[91m {}\033[00m'.format('Attention: ') +
-              f"Activity {garmin_activity_id} could not be marked uploaded since it was not found in the pending list."
+              f"Activity {activity_id} could not be marked uploaded since it was not found in the pending list."
         )
 
     if delete_cache:
-        folder = _find_activity_folder(garmin_activity_id)
+        folder = _find_activity_folder(activity_id)
         if folder:
             for f in folder.iterdir():
                 f.unlink()
             folder.rmdir()
 
-    if t_pak_activity_id is not None:
+    if delete_on_t_pak:
         headers = {"X-Auth-Token": get_token(),"Content-Type": "application/json"}
         try:
-            response = requests.delete(f"https://www.t-pak.ch/api/activity-imports/garmin/{t_pak_activity_id}",
-                                      headers=headers)
-            response.raise_for_status()
-        except requests.exceptions.HTTPError as e:
-            print(f"Could not delete t-pak activity upload {t_pak_activity_id}: {e}")
-        except requests.exceptions.ConnectionError as e:
-            print(f"Could not establish connection while deleting t-pak activity upload: {e}")
+            response = requests.delete(f"https://www.t-pak.ch/api/activity-imports/garmin/{activity_id}",
+                                      headers=headers, timeout=10)
+            if response.status_code not in [200, 204, 400]: # if there is no activity to delete thats fine
+                print(f"Warning: When deleting t-pak upload (id {activity_id}), the status code is {response.status_code}")
+        except requests.exceptions.RequestException as e:
+            print(f"Connection or request error when deleting a t-pak upload: {e}")
 
 # ---------- cache folder helpers ----------
 
